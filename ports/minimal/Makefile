@@ -50,6 +50,7 @@ LIBS =
 SRC_C = \
 	main.c \
 	uart_core.c \
+	STdriver.c \
 	shared/libc/printf.c \
 	shared/readline/readline.c \
 	shared/runtime/pyexec.c \
