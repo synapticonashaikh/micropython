@@ -1,0 +1,1 @@
+MP_REGISTER_ROOT_POINTER(struct _pyb_can_obj_t *pyb_can_obj_all[(2)]);
