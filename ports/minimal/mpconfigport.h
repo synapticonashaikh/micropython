@@ -8,7 +8,7 @@
 // You can disable the built-in MicroPython compiler by setting the following
 // config option to 0.  If you do this then you won't get a REPL prompt, but you
 // will still be able to execute pre-compiled scripts, compiled with mpy-cross.
-#define MICROPY_ENABLE_COMPILER     (1)
+#define MICROPY_ENABLE_COMPILER           (1)
 
 #define MICROPY_QSTR_EXTRA_POOL           mp_qstr_frozen_const_pool
 #define MICROPY_ENABLE_GC                 (1)
@@ -28,11 +28,11 @@ typedef long mp_off_t;
 // We need to provide a declaration/definition of alloca()
 #include <alloca.h>
 
-#define MICROPY_HW_BOARD_NAME "minimal"
-#define MICROPY_HW_MCU_NAME "unknown-cpu"
+#define MICROPY_HW_BOARD_NAME "NUCLEOF446RE"
+#define MICROPY_HW_MCU_NAME "STM32F446RE"
 
 #ifdef __linux__
-#define MICROPY_MIN_USE_STDOUT (1)
+#define MICROPY_MIN_USE_STDOUT (0)
 #endif
 
 //#ifdef __thumb__

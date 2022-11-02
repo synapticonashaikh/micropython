@@ -80,7 +80,6 @@ void FnClockConfigInit(void)
 			RCCAHB1PeriphClockCmd(  RCC_AHB1Periph_GPIOA | RCC_AHB1Periph_GPIOB | RCC_AHB1Periph_GPIOC , _ENABLE);
 }	
 
-
 /*****************************************************************************
  **@Function 		  	: 	FnDebuggComPortInit
  **@Descriptions		: 	USART3 COM port init
@@ -157,18 +156,19 @@ void FnSerialInit(void)
 	NVICInit(&stNVIC_InitStructure);
 	
 	/* Enable USART2 interrupt*/
-	USARTITConfig(_USART2,USART_IT_RXNE,_ENABLE);
+	//USARTITConfig(_USART2,USART_IT_RXNE,_ENABLE);
 	
-	USARTClearFlag(_USART2, 
-									USART_FLAG_LBD  | USART_FLAG_FE	  | USART_FLAG_TC  | 
-									USART_FLAG_IDLE | USART_FLAG_RXNE | USART_FLAG_PE  |
-									USART_FLAG_ORE  | USART_FLAG_NE   | USART_FLAG_CTS /*| USART_FLAG_TXE   */		);
+	//USARTClearFlag(_USART2, 
+	//								USART_FLAG_LBD  | USART_FLAG_FE	  | USART_FLAG_TC  | 
+	//								USART_FLAG_IDLE | USART_FLAG_RXNE | USART_FLAG_PE  |
+	//								USART_FLAG_ORE  | USART_FLAG_NE   | USART_FLAG_CTS /*| USART_FLAG_TXE   */		);
 	
+
 	/* Enable USART */
 	USARTCmd(_USART2, _ENABLE);
 	
 	/*TEST print*/	
-	printf("COM PORT INIT [USART1@115200bps].\n\r");
+	printf(" COM PORT INIT [USART2@115200bps].\n\r");
 	RCCClocksTypeDef RCC_Clocks		;
 	RCCGetClocksFreq(&RCC_Clocks)	;
 	printf("ALL CLOCK SET TO =\n\r")	;
@@ -180,7 +180,6 @@ void FnSerialInit(void)
 	printf("MAIN CLOCK SOUCE=%d\n\r", RCCGetSYSCLKSource());		
 
 }
-
 
 /*****************************************************************************
  **@Function 		  	: 	GPIOInit
@@ -238,7 +237,6 @@ void RCCDeInit(void)
   _RCC->DCKCFGR = 0x00000000;
   
 }
-
 
 /*****************************************************************************
  **@Function 		  	: 	RCCHSEConfig
@@ -401,7 +399,6 @@ void RCCPCLK1Config(uint32_t RCC_HCLK)
   _RCC->CFGR = tmpreg;
 }
 
-
 /*****************************************************************************
  **@Function 		  	: 	GPIOInit
  **@Descriptions		: 	
@@ -438,7 +435,6 @@ void RCCHCLKConfig(uint32_t RCC_SYSCLK)
   _RCC->CFGR = tmpreg;
 }
 
-
 /*****************************************************************************
  **@Function 		  	: 	GPIOInit
  **@Descriptions		: 	
@@ -458,7 +454,6 @@ void FLASHSetLatency(uint32_t FLASH_Latency)
 {  /* Perform Byte access to FLASH_ACR[8:0] to set the Latency value */
   *(volatile uint8_t *)ACR_BYTE0_ADDRESS = (uint8_t)FLASH_Latency;
 }
-
 
 /*****************************************************************************
  **@Function 		  	: 	GPIOInit
@@ -507,7 +502,6 @@ _FlagStatus RCCGetFlagStatus(uint8_t RCC_FLAG)
   /* Return the flag status */
   return bitstatus;
 }
-
 
 /*****************************************************************************
  **@Function 		  	: 	NVIC_Init
@@ -563,7 +557,7 @@ void USART2_IRQHandler(void)
 						
 							if( ucData == (char)'\n')
 								{ ucData = _RESET;
-								  print((char *)uc8Buffer,ui16BufferCount);	
+								  //STprint((const char *)uc8Buffer,ui16BufferCount);	
 								  memset(uc8Buffer,_RESET,ui16BufferCount);
 								  ui16BufferCount = _RESET ;	
 								}	
@@ -657,8 +651,8 @@ void GPIOResetBits(GPIOTypeDef* GPIOx, uint16_t GPIO_Pin)
  **@parameters			: 	USART_TypeDef* USARTx, uint16_t Data
  **@return					: 	None
 *****************************************************************************/
-void USARTSendData(USARTTypeDef* USARTx, uint16_t Data)
-{ USARTx->DR = (Data & (uint16_t)0x01FF); }
+void USARTSendData(USARTTypeDef* USARTx, uint16_t Data )
+{  USARTx->DR = (Data & (uint16_t)0x01FF);}
 
 /*****************************************************************************
  **@Function 		  	: 	USARTSendData
@@ -667,7 +661,7 @@ void USARTSendData(USARTTypeDef* USARTx, uint16_t Data)
  **@return					: 	None
 *****************************************************************************/
 uint16_t USARTReceiveData(USARTTypeDef* USARTx)
-{  return (uint16_t)(USARTx->DR & (uint16_t)0x01FF); }
+{    return (uint16_t)(USARTx->DR & (uint16_t)0x01FF);   }
 
 /*****************************************************************************
  **@Function 		  	: 	USARTGetFlagStatus
@@ -850,16 +844,13 @@ void USARTCmd(USARTTypeDef* USARTx, _FunctionalState NewState)
   }
 }
 
-
-
-
 /*****************************************************************************
  **@Function 		  	: 	PUTCHAR_PROTOTYPE
  **@Descriptions		: 	printf prototype
  **@parameters			: 	None
  **@return					: 	None
 *****************************************************************************/ 
-void print(char *data, uint16_t length)
+void STprint(const char *data, uint16_t length)
 {
 		for (uint16_t loop = _RESET ; loop < length ; loop++ )
 		{
@@ -868,7 +859,6 @@ void print(char *data, uint16_t length)
 			while (USARTGetFlagStatus(_USART2, USART_FLAG_TC) == _RESET) {  }	
 		}
 }
-
 
 /*****************************************************************************
  **@Function 		  	: 	PUTCHAR_PROTOTYPE
@@ -883,5 +873,6 @@ PUTCHAR_PROTOTYPE
   USARTSendData(_USART2, (uint8_t) ch);
   /* Loop until the end of transmission */
   while (USARTGetFlagStatus(_USART2, USART_FLAG_TC) == _RESET)  {  }
+         USARTClearFlag(_USART2, USART_FLAG_TC);
   return ch;
 }
