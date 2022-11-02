@@ -866,6 +866,34 @@ void STprint(const char *data, uint16_t length)
  **@parameters			: 	None
  **@return					: 	None
 *****************************************************************************/ 
+int STReceive(void)
+{
+		 while(  USARTGetFlagStatus(_USART2,USART_FLAG_RXNE) == _RESET){};					
+			       USARTClearFlag    (_USART2,USART_FLAG_RXNE);
+      return USARTReceiveData  (_USART2);
+}
+
+
+/*****************************************************************************
+ **@Function 		  	: 	PUTCHAR_PROTOTYPE
+ **@Descriptions		: 	printf prototype
+ **@parameters			: 	None
+ **@return					: 	None
+*****************************************************************************/ 
+void STBlink(void)
+{
+  GPIOSetBits(_GPIOA,GPIO_Pin_5);
+  for (volatile uint32_t uiloop = _RESET ; uiloop <(uint32_t)0xFF00; uiloop++){};
+  GPIOResetBits(_GPIOA,GPIO_Pin_5);
+  for (volatile uint32_t uiloop = _RESET ; uiloop <(uint32_t)0xFF00; uiloop++){};  
+}
+
+/*****************************************************************************
+ **@Function 		  	: 	PUTCHAR_PROTOTYPE
+ **@Descriptions		: 	printf prototype
+ **@parameters			: 	None
+ **@return					: 	None
+*****************************************************************************/ 
 PUTCHAR_PROTOTYPE
 {
   /* Place your implementation of fputc here */

@@ -78,36 +78,29 @@ int main(int argc, char **argv)
 }
 
 #if MICROPY_ENABLE_GC
-void gc_collect(void) {
+void gc_collect(void) 
+{
     // WARNING: This gc_collect implementation doesn't try to get root
     // pointers from CPU registers, and thus may function incorrectly.
     void *dummy;
-    gc_collect_start();
+    gc_collect_start( );
     gc_collect_root(&dummy, ((mp_uint_t)stack_top - (mp_uint_t)&dummy) / sizeof(mp_uint_t));
-    gc_collect_end();
-    gc_dump_info();
+    gc_collect_end( );
+    gc_dump_info( );
 }
 #endif
 
-mp_lexer_t *mp_lexer_new_from_file(const char *filename) {
-    mp_raise_OSError(MP_ENOENT);
-}
+mp_lexer_t *mp_lexer_new_from_file(const char *filename) 
+{  mp_raise_OSError(MP_ENOENT); }
 
-mp_import_stat_t mp_import_stat(const char *path) {
-    return MP_IMPORT_STAT_NO_EXIST;
-}
+mp_import_stat_t mp_import_stat(const char *path) 
+{ return MP_IMPORT_STAT_NO_EXIST;}
 
-void nlr_jump_fail(void *val) {
-    while (1) {
-        ;
-    }
-}
+void nlr_jump_fail(void *val) 
+{ while (1) {  }; }
 
-void NORETURN __fatal_error(const char *msg) {
-    while (1) {
-        ;
-    }
-}
+void NORETURN __fatal_error(const char *msg) 
+{ while (1) {  }; }
 
 #ifndef NDEBUG
 void MP_WEAK __assert_func(const char *file, int line, const char *func, const char *expr) {
@@ -119,30 +112,26 @@ void MP_WEAK __assert_func(const char *file, int line, const char *func, const c
 #if MICROPY_MIN_USE_CORTEX_CPU
 
 // this is a minimal IRQ and reset framework for any Cortex-M CPU
-
 extern uint32_t _estack, _sidata, _sdata, _edata, _sbss, _ebss;
 
 void Reset_Handler(void) __attribute__((naked));
-void Reset_Handler(void) {
+void Reset_Handler(void) 
+{
     // set stack pointer
     __asm volatile ("ldr sp, =_estack");
     // copy .data section from flash to RAM
-    for (uint32_t *src = &_sidata, *dest = &_sdata; dest < &_edata;) {
-        *dest++ = *src++;
-    }
+    for (uint32_t *src = &_sidata, *dest = &_sdata; dest < &_edata;) 
+        {  *dest++ = *src++;   }
     // zero out .bss section
-    for (uint32_t *dest = &_sbss; dest < &_ebss;) {
-        *dest++ = 0;
-    }
+    for (uint32_t *dest = &_sbss; dest < &_ebss;) 
+        {  *dest++ = 0;    }
     // jump to board initialisation
     void _start(void);
-    _start();
+         _start();
 }
 
-void Default_Handler(void) {
-    for (;;) {
-    }
-}
+void Default_Handler(void) 
+{ for (;;) { } }
 
 const uint32_t isr_vector[] __attribute__((section(".isr_vector"))) = 
 {
@@ -153,10 +142,7 @@ const uint32_t isr_vector[] __attribute__((section(".isr_vector"))) =
     (uint32_t)&Default_Handler, // MemManage_Handler
     (uint32_t)&Default_Handler, // BusFault_Handler
     (uint32_t)&Default_Handler, // UsageFault_Handler
-    0,
-    0,
-    0,
-    0,
+    0,   0,    0,    0,
     (uint32_t)&Default_Handler, // SVC_Handler
     (uint32_t)&Default_Handler, // DebugMon_Handler
     0,
@@ -166,7 +152,6 @@ const uint32_t isr_vector[] __attribute__((section(".isr_vector"))) =
 
 void _start(void) 
 {
-
     // initialise the cpu and peripherals
     #if MICROPY_MIN_USE_STM32_MCU
     void stm32_init(void);
@@ -177,21 +162,19 @@ void _start(void)
     main(0, NULL);
 
     // we must not return
-    for (;;) {
-    }
+    for (;;) { }
 }
-
 #endif
 
 #if MICROPY_MIN_USE_STM32_MCU
     void stm32_init(void)
     {
-
+        /*init the system clock to 100mhz*/
         FnClockConfigInit();
-
+        /*init the led gpio*/
         FnGPIOInit ();
-
+        STBlink();
+        /*init the serail port(uart2) at 115200 baudrate*/
         FnSerialInit ();
-
     }
 #endif

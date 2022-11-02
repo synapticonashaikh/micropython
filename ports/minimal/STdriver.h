@@ -668,6 +668,8 @@ extern void GPIOInit(GPIOTypeDef* GPIOx, GPIOInitTypeDef* GPIO_InitStruct);
 extern void GPIOSetBits(GPIOTypeDef* GPIOx, uint16_t GPIO_Pin);
 extern void GPIOResetBits(GPIOTypeDef* GPIOx, uint16_t GPIO_Pin);
 extern void STprint(const char *data, uint16_t length);
+extern int  STReceive(void);
+extern void STBlink(void);
 extern void USARTSendData(USARTTypeDef* USARTx, uint16_t Data);	
 extern uint16_t USARTReceiveData(USARTTypeDef* USARTx);
 extern _FlagStatus USARTGetFlagStatus(USARTTypeDef* USARTx, uint16_t USART_FLAG);

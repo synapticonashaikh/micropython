@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "*.xc": "cpp",
+        "stdriver.h": "c",
+        "builtin.h": "c"
+    }
+}
