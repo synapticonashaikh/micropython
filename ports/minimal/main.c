@@ -11,6 +11,12 @@
 #include "shared/runtime/pyexec.h"
 #include "STdriver.h"
 
+
+
+
+uint8_t uiVAlue = 20;
+
+
 extern void mp_hal_stdout_tx_strn(const char *str, mp_uint_t len);
 extern int  mp_hal_stdin_rx_chr  (void);
 

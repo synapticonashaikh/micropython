@@ -2,6 +2,9 @@
     "files.associations": {
         "*.xc": "cpp",
         "stdriver.h": "c",
-        "builtin.h": "c"
+        "builtin.h": "c",
+        "*.tcc": "c",
+        "cstdio": "c",
+        "stdio.h": "c"
     }
 }
