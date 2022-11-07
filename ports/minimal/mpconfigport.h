@@ -19,6 +19,10 @@
 #define MICROPY_ALLOC_PATH_MAX            (256)
 #define MICROPY_ALLOC_PARSE_CHUNK_INIT    (16)
 
+#ifndef MICROPY_FLOAT_IMPL // can be configured by each board via mpconfigboard.mk
+//#define MICROPY_FLOAT_IMPL          (MICROPY_FLOAT_IMPL_FLOAT)
+#endif
+
 // type definitions for the specific machine
 
 typedef intptr_t mp_int_t; // must be pointer size
