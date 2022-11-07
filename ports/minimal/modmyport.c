@@ -7,16 +7,11 @@
 #include <stdarg.h>
 #include <stddef.h>
 
-
-extern uint8_t uiVAlue;
-
-extern void FnPrint(char *buffer);
-
-
+//#######################################################################################
 STATIC mp_obj_t myport_info(void) 
 {
 
-    mp_printf(&mp_plat_print, "info about my import=%d\n",uiVAlue);
+    mp_printf(&mp_plat_print, "info about my import=100\n");
     return mp_const_none;
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_0(myport_info_obj, myport_info);
@@ -26,6 +21,8 @@ STATIC const mp_rom_map_elem_t myport_module_globals_table[] =
 {
     { MP_OBJ_NEW_QSTR(MP_QSTR___name__), MP_OBJ_NEW_QSTR(MP_QSTR_myport) },
     { MP_ROM_QSTR(MP_QSTR_info), MP_ROM_PTR(&myport_info_obj) },
+
+
 };
 STATIC MP_DEFINE_CONST_DICT(myport_module_globals, myport_module_globals_table);
 
@@ -40,19 +37,30 @@ MP_REGISTER_MODULE(MP_QSTR_myport, myport_module);
 
 STATIC mp_obj_t board_clockinfo(void) 
 {
-
     char buffer [150]= {'\0'}; 
-    //FnPrint(buffer);
+    sprintf(buffer,"this is just for test\n\r");    /*this is working*/    
+    //sprintf(buffer,"this is just for test=%d\n\r",a); /*this is not working*/
     mp_printf(&mp_plat_print, buffer);
     return mp_const_none;
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_0(board_clockinfo_obj, board_clockinfo);
+
+STATIC mp_obj_t board_healthinfo(void) 
+{
+    char buffer [150]= {'\0'}; 
+    sprintf(buffer,"Health is good!\n\r");    /*this is working*/    
+    //sprintf(buffer,"this is just for test=%d\n\r",a); /*this is not working*/
+    mp_printf(&mp_plat_print, buffer);
+    return mp_const_none;
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_0(board_healthinfo_obj, board_healthinfo);
 
 
 STATIC const mp_rom_map_elem_t board_module_globals_table[] = 
 {
     { MP_OBJ_NEW_QSTR(MP_QSTR___name__), MP_OBJ_NEW_QSTR(MP_QSTR_board) },
     { MP_ROM_QSTR(MP_QSTR_clockinfo), MP_ROM_PTR(&board_clockinfo_obj) },
+    { MP_ROM_QSTR(MP_QSTR_healthinfo), MP_ROM_PTR(&board_healthinfo_obj) },
 };
 STATIC MP_DEFINE_CONST_DICT(board_module_globals, board_module_globals_table);
 
