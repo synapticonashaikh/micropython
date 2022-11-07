@@ -4,14 +4,19 @@
 #include "string.h"
 #include "stdlib.h"
 #include "STdriver.h"
+#include <stdarg.h>
+#include <stddef.h>
 
 
 extern uint8_t uiVAlue;
 
+extern void FnPrint(char *buffer);
+
+
 STATIC mp_obj_t myport_info(void) 
 {
 
-    mp_printf(&mp_plat_print, "info about my port0=%d\n",uiVAlue);
+    mp_printf(&mp_plat_print, "info about my import=%d\n",uiVAlue);
     return mp_const_none;
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_0(myport_info_obj, myport_info);
@@ -35,19 +40,9 @@ MP_REGISTER_MODULE(MP_QSTR_myport, myport_module);
 
 STATIC mp_obj_t board_clockinfo(void) 
 {
-    //char str[40];
+
     char buffer [150]= {'\0'}; 
-
-    RCCClocksTypeDef RCC_Clocks		;
-	RCCGetClocksFreq(&RCC_Clocks)	;
-	// sprintf(str,"ALL CLOCK SET TO =\n\r"); strcat(buffer, str);
-	// sprintf(str,"SYSCLK=%lu "  ,	 RCC_Clocks.SYSCLK_Frequency); strcat(buffer, str);
-	// sprintf(str,"HCLK=%lu\n\r" ,	 RCC_Clocks.HCLK_Frequency  ); strcat(buffer, str);
-	// sprintf(str,"PCLK1=%lu\t"  ,	 RCC_Clocks.PCLK1_Frequency ); strcat(buffer, str);
-	// sprintf(str,"PCLK2=%lu\n\r",	 RCC_Clocks.PCLK2_Frequency ); strcat(buffer, str);
-	// sprintf(str,"PLL CLOCK SOURCE=%lu\n\r",(_RCC->PLLCFGR & RCC_PLLCFGR_PLLSRC) >> 22); strcat(buffer, str);
-	// sprintf(str,"MAIN CLOCK SOUCE=%d\n\r", RCCGetSYSCLKSource());  strcat(buffer, str);		
-
+    //FnPrint(buffer);
     mp_printf(&mp_plat_print, buffer);
     return mp_const_none;
 }

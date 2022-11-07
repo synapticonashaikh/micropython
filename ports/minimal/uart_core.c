@@ -1,6 +1,10 @@
 #include <unistd.h>
 #include "py/mpconfig.h"
 #include "STdriver.h"
+#include <stdarg.h>
+#include <stdio.h>
+#include <string.h>
+
 
 // Receive single character
 int mp_hal_stdin_rx_chr(void) 

@@ -52,6 +52,7 @@ SRC_C = \
 	uart_core.c \
 	STdriver.c \
 	modmyport.c \
+	myprint.c \
 	shared/libc/printf.c \
 	shared/readline/readline.c \
 	shared/runtime/pyexec.c \

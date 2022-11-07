@@ -5,6 +5,15 @@
         "builtin.h": "c",
         "*.tcc": "c",
         "cstdio": "c",
-        "stdio.h": "c"
-    }
+        "stdio.h": "c",
+        "array": "c",
+        "deque": "c",
+        "string": "c",
+        "unordered_map": "c",
+        "vector": "c",
+        "string_view": "c",
+        "initializer_list": "c",
+        "ranges": "c"
+    },
+    "C_Cpp.errorSquiggles": "Disabled"
 }
