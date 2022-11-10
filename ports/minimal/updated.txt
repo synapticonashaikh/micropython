@@ -22,14 +22,49 @@ INC += -I$(BUILD)
 ifeq ($(CROSS), 1)
 DFU = $(TOP)/tools/dfu.py
 PYDFU = $(TOP)/tools/pydfu.py
-CFLAGS_CORTEX_M4 = -mthumb -mtune=cortex-m4 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -fsingle-precision-constant -Wdouble-promotion -Wfloat-conversion
-CFLAGS += $(INC) -Wall -Werror  -std=c99  $(CFLAGS_CORTEX_M4) $(COPT)
-LDFLAGS += -T stm32f405.ld -Map=$@.map --cref --gc-sections
+CFLAGS_CORTEX_M4 = -mthumb -mtune=cortex-m4 -mcpu=cortex-m4 -msoft-float -fsingle-precision-constant -Wdouble-promotion -Wfloat-conversion
+CFLAGS += $(INC) -Wall -Werror  -std=c99 -nostdlib $(CFLAGS_CORTEX_M4) $(COPT)
+LDFLAGS += -nostdlib -T stm32f405.ld -Map=$@.map --cref --gc-sections
 else
 LD = gcc
 CFLAGS += $(INC) -Wall -Werror -Wdouble-promotion -Wfloat-conversion -std=c99 $(COPT)
 LDFLAGS += -Wl,-Map=$@.map,--cref -Wl,--gc-sections
 endif
+
+CFLAGS += -DMICROPY_FLOAT_IMPL=MICROPY_FLOAT_IMPL_FLOAT
+CFLAGS += -fsingle-precision-constant
+#$(info CFLAGS is $(CFLAGS)) 
+
+LIBM_SRC_C += $(addprefix lib/libm/,\
+	math.c \
+	acoshf.c \
+	asinfacosf.c \
+	asinhf.c \
+	atan2f.c \
+	atanf.c \
+	atanhf.c \
+	ef_rem_pio2.c \
+	erf_lgamma.c \
+	fmodf.c \
+	kf_cos.c \
+	kf_rem_pio2.c \
+	kf_sin.c \
+	kf_tan.c \
+	log1pf.c \
+	nearbyintf.c \
+	roundf.c \
+	sf_cos.c \
+	sf_erf.c \
+	sf_frexp.c \
+	sf_ldexp.c \
+	sf_modf.c \
+	sf_sin.c \
+	sf_tan.c \
+	wf_lgamma.c \
+	wf_tgamma.c \
+	)
+
+LIBM_O = $(addprefix $(BUILD)/, $(LIBM_SRC_C:.c=.o))
 
 CSUPEROPT = -Os # save some code space
 
@@ -45,46 +80,14 @@ endif
 # Flags for optional C++ source code
 CXXFLAGS += $(filter-out -std=c99,$(CFLAGS))
 
-LIBS += "$(shell $(CC) $(CFLAGS) -print-libgcc-file-name)"
-
-SRC_LIB += $(addprefix lib/,\
-        libm/math.c \
-        libm/fmodf.c \
-        libm/nearbyintf.c \
-        libm/ef_sqrt.c \
-        libm/kf_rem_pio2.c \
-        libm/kf_sin.c \
-        libm/kf_cos.c \
-        libm/kf_tan.c \
-        libm/ef_rem_pio2.c \
-        libm/sf_sin.c \
-        libm/sf_cos.c \
-        libm/sf_tan.c \
-        libm/sf_frexp.c \
-        libm/sf_modf.c \
-        libm/sf_ldexp.c \
-        libm/asinfacosf.c \
-        libm/acoshf.c \
-        libm/asinhf.c \
-        libm/atanf.c \
-        libm/atan2f.c \
-        libm/atanhf.c \
-        libm/log1pf.c \
-        libm/sf_erf.c \
-        libm/erf_lgamma.c \
-        libm/wf_lgamma.c \
-        libm/wf_tgamma.c \
-        libm/roundf.c \
-	)
-
-LIBM_O = $(addprefix $(BUILD)/, $(SRC_LIB:.c=.o))
-
+LIBS = 
 
 SRC_C = \
 	main.c \
 	uart_core.c \
 	STdriver.c \
 	modmyport.c \
+	myprint.c \
 	shared/libc/printf.c \
 	shared/readline/readline.c \
 	shared/runtime/pyexec.c \

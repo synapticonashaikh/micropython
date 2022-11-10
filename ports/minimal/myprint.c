@@ -17,7 +17,7 @@ void reverse(char *x, char *y)
        y[begin] = '\0';
 }
 
-void itoa(int val,char *ret, int base)
+void my_itoa(int val,char *ret, int base)
 {	
     char rev[30];
     int i = 0;	
@@ -67,7 +67,7 @@ int my_vfprintf(FILE *file, char const *fmt, va_list arg) {
                 /* %d: print out an int         */
                 case 'd':
                     int_temp = va_arg(arg, int);
-                    itoa(int_temp, buffer, 10);
+                    my_itoa(int_temp, buffer, 10);
                     fputs(buffer, file);
                     length += strlen(buffer);
                     break;
@@ -75,7 +75,7 @@ int my_vfprintf(FILE *file, char const *fmt, va_list arg) {
                 /* %x: print out an int in hex  */
                 case 'x':
                     int_temp = va_arg(arg, int);
-                    itoa(int_temp, buffer, 16);
+                    my_itoa(int_temp, buffer, 16);
                     fputs(buffer, file);
                     length += strlen(buffer);
                     break;
@@ -149,7 +149,7 @@ int my_cfprintf(char *buff, char const *fmt, va_list arg)
                 /* %d: print out an int         */
                 case 'd':
                     int_temp = va_arg(arg, int);
-                    itoa(int_temp, buffer, 10);
+                    my_itoa(int_temp, buffer, 10);
                     strcat(buff,buffer );
                     length += strlen(buffer);
                     break;
@@ -157,7 +157,7 @@ int my_cfprintf(char *buff, char const *fmt, va_list arg)
                 /* %x: print out an int in hex  */
                 case 'x':
                     int_temp = va_arg(arg, int);
-                    itoa(int_temp, buffer, 16);
+                    my_itoa(int_temp, buffer, 16);
                     strcat(buff,buffer );
                     length += strlen(buffer);
                     break;
@@ -303,7 +303,7 @@ void ftoa_sci(char *buffer, double value)
     }
 
     *buffer++ = 'e';
-    itoa(exponent, buffer, 10);
+    my_itoa(exponent, buffer, 10);
 }
 
 int my_sprintf(char *buff, char const *fmt, ...) 

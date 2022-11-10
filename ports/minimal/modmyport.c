@@ -38,8 +38,9 @@ MP_REGISTER_MODULE(MP_QSTR_myport, myport_module);
 STATIC mp_obj_t board_clockinfo(void) 
 {
     char buffer [150]= {'\0'}; 
+   // int a = 1;
     sprintf(buffer,"this is just for test\n\r");    /*this is working*/    
-    //sprintf(buffer,"this is just for test=%d\n\r",a); /*this is not working*/
+   // sprintf(buffer,"this is just for test=%d\n\r",a); /*this is not working*/
     mp_printf(&mp_plat_print, buffer);
     return mp_const_none;
 }
