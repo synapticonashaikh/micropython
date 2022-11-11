@@ -5,7 +5,7 @@ include ../../py/mkenv.mk
 CROSS = 0
 
 #enable disable float functionality
-ENABLE_DISABLE_FLOAT = 0 
+ENABLE_DISABLE_FLOAT = 1
 
 # qstr definitions (must come before including py.mk)
 QSTR_DEFS = qstrdefsport.h
@@ -32,12 +32,14 @@ PYDFU = $(TOP)/tools/pydfu.py
 #check and add the float related functionality
 ifeq ($(ENABLE_DISABLE_FLOAT), 1)
 #add the ARM core flags
-CFLAGS_CORTEX_M4 = -mthumb -mtune=cortex-m4 -mcpu=cortex-m4 -fsingle-precision-constant -Wdouble-promotion -Wfloat-conversion 
+$(warning Compliation Flag, float is enabled)
+CFLAGS_CORTEX_M4 = -mthumb -mtune=cortex-m4 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=soft -fsingle-precision-constant -Wdouble-promotion -Wfloat-conversion
 CFLAGS += -DMICROPY_FLOAT_IMPL=MICROPY_FLOAT_IMPL_FLOAT
-CFLAGS  += $(INC) -Wall -Werror -mfpu=fpv4-sp-d16 -mfloat-abi=hard -std=c99 -Wpointer-arith -nostdlib $(CFLAGS_CORTEX_M4) $(COPT)
+CFLAGS += $(INC) -Wall -Werror -std=c99 -nostdlib -Wpointer-arith  $(CFLAGS_CORTEX_M4) $(COPT)
 else
-CFLAGS_CORTEX_M4 = -mthumb -mtune=cortex-m4 -mcpu=cortex-m4 -msoft-float -fsingle-precision-constant -Wdouble-promotion -Wfloat-conversion
-CFLAGS += $(INC) -Wall -Werror -std=c99 -nostdlib $(CFLAGS_CORTEX_M4) $(COPT)
+$(warning Compliation Flag, float is disabled)
+CFLAGS_CORTEX_M4 = -mthumb -mtune=cortex-m4 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=soft -fsingle-precision-constant -Wdouble-promotion -Wfloat-conversion
+CFLAGS += $(INC) -Wall -Werror -std=c99 -nostdlib -Wpointer-arith  $(CFLAGS_CORTEX_M4) $(COPT)
 endif
 LDFLAGS += -nostdlib -T stm32f405.ld -Map=$@.map --cref --gc-sections
 else
@@ -65,7 +67,6 @@ $(info FinalCFLAGS is $(CFLAGS))
 
 ifeq ($(ENABLE_DISABLE_FLOAT), 1)
 LIBS += "$(shell $(CC) $(CFLAGS) -print-libgcc-file-name)"
-
 #adding the python library
 SRC_LIB += $(addprefix lib/,\
         libm/math.c \
@@ -96,12 +97,12 @@ SRC_LIB += $(addprefix lib/,\
         libm/wf_tgamma.c \
         libm/roundf.c \
 	)
-
 LIBM_O = $(addprefix $(BUILD)/, $(SRC_LIB:.c=.o))
-
 else
 LIBS = 
 endif
+
+$(info LIBS is $(LIBS)) 
 
 
 SRC_C = \
