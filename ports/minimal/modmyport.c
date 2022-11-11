@@ -107,9 +107,8 @@ STATIC const mp_rom_map_elem_t board_module_globals_table[] =
     { MP_ROM_QSTR(MP_QSTR_healthinfo), MP_ROM_PTR(&board_healthinfo_obj) },
     { MP_ROM_QSTR(MP_QSTR_add), MP_ROM_PTR(&board_add_obj) },
     { MP_ROM_QSTR(MP_QSTR_mul), MP_ROM_PTR(&board_mul_obj) },    
-    { MP_ROM_QSTR(MP_QSTR_mul10), MP_ROM_PTR(&board_mul10_obj) },
-   { MP_ROM_QSTR(MP_QSTR_strcat), MP_ROM_PTR(&board_strcat_obj) },
-
+    { MP_ROM_QSTR(MP_QSTR_mul10),  MP_ROM_PTR(&board_mul10_obj) },
+    { MP_ROM_QSTR(MP_QSTR_strcat), MP_ROM_PTR(&board_strcat_obj)},
 
 };
 STATIC MP_DEFINE_CONST_DICT(board_module_globals, board_module_globals_table);
