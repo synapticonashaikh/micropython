@@ -1,6 +1,11 @@
+#include the python envirmental variables
 include ../../py/mkenv.mk
 
+#to build for either STM board or Linux env
 CROSS = 0
+
+#enable disable float functionality
+ENABLE_DISABLE_FLOAT = 0 
 
 # qstr definitions (must come before including py.mk)
 QSTR_DEFS = qstrdefsport.h
@@ -11,6 +16,7 @@ MICROPY_ROM_TEXT_COMPRESSION ?= 1
 # include py core make definitions
 include $(TOP)/py/py.mk
 
+
 ifeq ($(CROSS), 1)
 CROSS_COMPILE ?= arm-none-eabi-
 endif
@@ -19,13 +25,23 @@ INC += -I.
 INC += -I$(TOP)
 INC += -I$(BUILD)
 
+#if the CROSS = 1 build add the compilation and linking flag
 ifeq ($(CROSS), 1)
 DFU = $(TOP)/tools/dfu.py
 PYDFU = $(TOP)/tools/pydfu.py
-CFLAGS_CORTEX_M4 = -mthumb -mtune=cortex-m4 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -fsingle-precision-constant -Wdouble-promotion -Wfloat-conversion
-CFLAGS += $(INC) -Wall -Werror  -std=c99  $(CFLAGS_CORTEX_M4) $(COPT)
-LDFLAGS += -T stm32f405.ld -Map=$@.map --cref --gc-sections
+#check and add the float related functionality
+ifeq ($(ENABLE_DISABLE_FLOAT), 1)
+#add the ARM core flags
+CFLAGS_CORTEX_M4 = -mthumb -mtune=cortex-m4 -mcpu=cortex-m4 -fsingle-precision-constant -Wdouble-promotion -Wfloat-conversion 
+CFLAGS += -DMICROPY_FLOAT_IMPL=MICROPY_FLOAT_IMPL_FLOAT
+CFLAGS  += $(INC) -Wall -Werror -mfpu=fpv4-sp-d16 -mfloat-abi=hard -std=c99 -Wpointer-arith -nostdlib $(CFLAGS_CORTEX_M4) $(COPT)
 else
+CFLAGS_CORTEX_M4 = -mthumb -mtune=cortex-m4 -mcpu=cortex-m4 -msoft-float -fsingle-precision-constant -Wdouble-promotion -Wfloat-conversion
+CFLAGS += $(INC) -Wall -Werror -std=c99 -nostdlib $(CFLAGS_CORTEX_M4) $(COPT)
+endif
+LDFLAGS += -nostdlib -T stm32f405.ld -Map=$@.map --cref --gc-sections
+else
+#compiler for linux enviroment 
 LD = gcc
 CFLAGS += $(INC) -Wall -Werror -Wdouble-promotion -Wfloat-conversion -std=c99 $(COPT)
 LDFLAGS += -Wl,-Map=$@.map,--cref -Wl,--gc-sections
@@ -45,8 +61,12 @@ endif
 # Flags for optional C++ source code
 CXXFLAGS += $(filter-out -std=c99,$(CFLAGS))
 
+$(info FinalCFLAGS is $(CFLAGS)) 
+
+ifeq ($(ENABLE_DISABLE_FLOAT), 1)
 LIBS += "$(shell $(CC) $(CFLAGS) -print-libgcc-file-name)"
 
+#adding the python library
 SRC_LIB += $(addprefix lib/,\
         libm/math.c \
         libm/fmodf.c \
@@ -79,6 +99,10 @@ SRC_LIB += $(addprefix lib/,\
 
 LIBM_O = $(addprefix $(BUILD)/, $(SRC_LIB:.c=.o))
 
+else
+LIBS = 
+endif
+
 
 SRC_C = \
 	main.c \
@@ -100,9 +124,12 @@ SRC_QSTR += modmyport.c
 
 
 OBJ += $(PY_CORE_O)
+ifeq ($(ENABLE_DISABLE_FLOAT), 1)
 OBJ += $(LIBM_O)
+endif
 OBJ += $(addprefix $(BUILD)/, $(SRC_C:.c=.o))
 OBJ += $(addprefix $(BUILD)/, $(SRC_CXX:.cpp=.o))
+
 
 ifeq ($(CROSS), 1)
 all: $(BUILD)/firmware.dfu

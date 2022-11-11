@@ -27,7 +27,7 @@ typedef uintptr_t mp_uint_t; // must be pointer size
 typedef long mp_off_t;
 
 //#ifndef MICROPY_FLOAT_IMPL // can be configured by each board via mpconfigboard.mk
-#define MICROPY_FLOAT_IMPL          (MICROPY_FLOAT_IMPL_FLOAT)
+//#define MICROPY_FLOAT_IMPL          (MICROPY_FLOAT_IMPL_FLOAT)
 //#endif
 
 #define MICROPY_HW_BOARD_NAME "NUCLEOF446RE"

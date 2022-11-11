@@ -124,6 +124,9 @@ CFLAGS += -fsingle-precision-constant
 endif
 endif
 
+#$(info CFLAGS is $(CFLAGS)) 
+
+
 LDFLAGS += -nostdlib -L $(LD_DIR) $(addprefix -T,$(LD_FILES)) -Wl,-Map=$(@:.elf=.map) -Wl,--cref
 LDFLAGS += -Wl,--defsym=_estack_reserve=8
 LIBS += "$(shell $(CC) $(CFLAGS) -print-libgcc-file-name)"
@@ -267,6 +270,8 @@ else
 LIBM_SRC_C += lib/libm/ef_sqrt.c
 endif
 endif
+
+#$(info LIBM_SRC_C is $(LIBM_SRC_C)) 
 
 LIBM_O = $(addprefix $(BUILD)/, $(LIBM_SRC_C:.c=.o))
 

@@ -1,1 +1,0 @@
-MP_REGISTER_ROOT_POINTER(struct _pyb_timer_obj_t *pyb_timer_obj_all[(14)]);

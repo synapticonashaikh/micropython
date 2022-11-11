@@ -1,6 +1,0 @@
-Q(read_u16)
-Q(VREF)
-Q(CORE_VREF)
-Q(CORE_TEMP)
-Q(CORE_VBAT)
-Q(ADC)
