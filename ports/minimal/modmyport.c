@@ -81,12 +81,22 @@ STATIC mp_obj_t board_mul10(mp_obj_t a)
    r = f * 10 ;
    mp_printf(&mp_plat_print, "[%d]Multiplication of %.2f and 10.00 is %.2f\n\r",
    value, (double)f,(double)r ); 
-
    return mp_obj_new_float(r);
 
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(board_mul10_obj, board_mul10);
 
+
+STATIC mp_obj_t board_strcat(mp_obj_t a, mp_obj_t b) 
+{
+
+   strcat((char *)mp_obj_str_get_str(a),mp_obj_str_get_str(b));
+   mp_printf(&mp_plat_print, "strcat is %s\n\r",
+   mp_obj_str_get_str(a)); 
+   return mp_obj_new_str(mp_obj_str_get_str(a),strlen(mp_obj_str_get_str(a)));
+
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_2(board_strcat_obj, board_strcat);
 
 
 
@@ -97,7 +107,9 @@ STATIC const mp_rom_map_elem_t board_module_globals_table[] =
     { MP_ROM_QSTR(MP_QSTR_healthinfo), MP_ROM_PTR(&board_healthinfo_obj) },
     { MP_ROM_QSTR(MP_QSTR_add), MP_ROM_PTR(&board_add_obj) },
     { MP_ROM_QSTR(MP_QSTR_mul), MP_ROM_PTR(&board_mul_obj) },    
-    { MP_ROM_QSTR(MP_QSTR_mul10), MP_ROM_PTR(&board_mul10_obj) },    
+    { MP_ROM_QSTR(MP_QSTR_mul10), MP_ROM_PTR(&board_mul10_obj) },
+   { MP_ROM_QSTR(MP_QSTR_strcat), MP_ROM_PTR(&board_strcat_obj) },
+
 
 };
 STATIC MP_DEFINE_CONST_DICT(board_module_globals, board_module_globals_table);
