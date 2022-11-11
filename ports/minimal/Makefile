@@ -64,9 +64,11 @@ endif
 CXXFLAGS += $(filter-out -std=c99,$(CFLAGS))
 
 $(info FinalCFLAGS is $(CFLAGS)) 
+$(info Compiler is $(CC)) 
 
 ifeq ($(ENABLE_DISABLE_FLOAT), 1)
 LIBS += "$(shell $(CC) $(CFLAGS) -print-libgcc-file-name)"
+
 #adding the python library
 SRC_LIB += $(addprefix lib/,\
         libm/math.c \
@@ -137,6 +139,8 @@ all: $(BUILD)/firmware.dfu
 else
 all: $(BUILD)/firmware.elf
 endif
+
+
 
 $(BUILD)/_frozen_mpy.c: $(TOP)/tests/frozen/frozentest.mpy $(BUILD)/genhdr/qstrdefs.generated.h
 	$(ECHO) "MISC freezing bytecode"

@@ -22,7 +22,6 @@ STATIC const mp_rom_map_elem_t myport_module_globals_table[] =
     { MP_OBJ_NEW_QSTR(MP_QSTR___name__), MP_OBJ_NEW_QSTR(MP_QSTR_myport) },
     { MP_ROM_QSTR(MP_QSTR_info), MP_ROM_PTR(&myport_info_obj) },
 
-
 };
 STATIC MP_DEFINE_CONST_DICT(myport_module_globals, myport_module_globals_table);
 
@@ -40,7 +39,7 @@ STATIC mp_obj_t board_clockinfo(void)
     char buffer [150]= {'\0'}; 
    // int a = 1;
     sprintf(buffer,"this is just for test\n\r");    /*this is working*/    
-   // sprintf(buffer,"this is just for test=%d\n\r",a); /*this is not working*/
+    //sprintf(buffer,"this is just for test=%d\n\r",a); /*this is not working*/
     mp_printf(&mp_plat_print, buffer);
     return mp_const_none;
 }
@@ -63,6 +62,33 @@ STATIC mp_obj_t board_add(mp_obj_t a, mp_obj_t b)
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_2(board_add_obj, board_add);
 
+STATIC mp_obj_t board_mul(mp_obj_t a, mp_obj_t b) 
+{
+    
+   mp_printf(&mp_plat_print, "Multiplication of %.2f and %.2f is %.2f\n\r",
+   (double)(mp_obj_float_get(a)),(double)(mp_obj_float_get(b)), (double)(mp_obj_float_get(a) * mp_obj_float_get(b) ) ); 
+
+   return mp_obj_new_float((mp_float_t)(mp_obj_float_get(a) * mp_obj_float_get(b) ));
+
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_2(board_mul_obj, board_mul);
+
+STATIC mp_obj_t board_mul10(mp_obj_t a) 
+{
+   mp_float_t f,r;
+   bool value; 
+   value = mp_obj_get_float_maybe(a,&f);
+   r = f * 10 ;
+   mp_printf(&mp_plat_print, "[%d]Multiplication of %.2f and 10.00 is %.2f\n\r",
+   value, (double)f,(double)r ); 
+
+   return mp_obj_new_float(r);
+
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_1(board_mul10_obj, board_mul10);
+
+
+
 
 STATIC const mp_rom_map_elem_t board_module_globals_table[] = 
 {
@@ -70,6 +96,8 @@ STATIC const mp_rom_map_elem_t board_module_globals_table[] =
     { MP_ROM_QSTR(MP_QSTR_clockinfo), MP_ROM_PTR(&board_clockinfo_obj) },
     { MP_ROM_QSTR(MP_QSTR_healthinfo), MP_ROM_PTR(&board_healthinfo_obj) },
     { MP_ROM_QSTR(MP_QSTR_add), MP_ROM_PTR(&board_add_obj) },
+    { MP_ROM_QSTR(MP_QSTR_mul), MP_ROM_PTR(&board_mul_obj) },    
+    { MP_ROM_QSTR(MP_QSTR_mul10), MP_ROM_PTR(&board_mul10_obj) },    
 
 };
 STATIC MP_DEFINE_CONST_DICT(board_module_globals, board_module_globals_table);
