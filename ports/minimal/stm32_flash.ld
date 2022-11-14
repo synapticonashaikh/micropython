@@ -2,7 +2,7 @@
 *****************************************************************************
 **
 
-**  File        : stm32_flash.ld
+**  File        : 
 **
 **  Abstract    : Linker script for STM32F446ZE Device with
 **                512KByte FLASH, 128KByte RAM
@@ -158,9 +158,9 @@ SECTIONS
   /* Remove information from the standard libraries */
   /DISCARD/ :
   {
-    libc.a ( * )
-    libm.a ( * )
-    libgcc.a ( * )
+    /*libc.a ( * )
+    libm.a ( * ) 
+    libgcc.a ( * ) */
   }
 
   .ARM.attributes 0 : { *(.ARM.attributes) }

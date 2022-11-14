@@ -11,11 +11,8 @@
 #include "shared/runtime/pyexec.h"
 #include "STdriver.h"
 
-
-
-
-uint8_t uiVAlue = 20;
-
+//this heap memroy stores the data
+#define _STATIC_HEAP_SIZE  (uint16_t)3072
 
 extern void mp_hal_stdout_tx_strn(const char *str, mp_uint_t len);
 extern int  mp_hal_stdin_rx_chr  (void);
@@ -44,7 +41,7 @@ void do_str(const char *src, mp_parse_input_kind_t input_kind)
 
 static char *stack_top;
 #if MICROPY_ENABLE_GC
-    static char heap[2048];
+    static char heap[_STATIC_HEAP_SIZE];
 #endif
 
 int main(int argc, char **argv) 
@@ -92,7 +89,8 @@ void gc_collect(void)
     gc_collect_start( );
     gc_collect_root(&dummy, ((mp_uint_t)stack_top - (mp_uint_t)&dummy) / sizeof(mp_uint_t));
     gc_collect_end( );
-    gc_dump_info( );
+  //printing the memory remaining is not necessary   
+  //gc_dump_info( );
 }
 #endif
 

@@ -4,8 +4,11 @@ include ../../py/mkenv.mk
 #to build for either STM board or Linux env
 CROSS = 0
 
-#enable disable float functionality
+#enable/ disable float functionality
 ENABLE_DISABLE_FLOAT = 1
+
+#enable/ disable debugg message 
+ENABLE_DISABLE_DEBUGG_MESSAGE = 1
 
 # qstr definitions (must come before including py.mk)
 QSTR_DEFS = qstrdefsport.h
@@ -13,35 +16,61 @@ QSTR_DEFS = qstrdefsport.h
 # MicroPython feature configurations
 MICROPY_ROM_TEXT_COMPRESSION ?= 1
 
+#C standard library
+_C_STD_LIB = -std=c99
+
+#board linking file 
+_BOARD_LINKING_FILE = stm32_flash.ld #stm32f405.ld
+
 # include py core make definitions
 include $(TOP)/py/py.mk
 
-
+#check if the CROSS is enable
 ifeq ($(CROSS), 1)
 CROSS_COMPILE ?= arm-none-eabi-
 endif
 
+#print of the debugg is enable
+ifeq ($(ENABLE_DISABLE_DEBUGG_MESSAGE), 1)
+$(info Debugg: Debugg message enable!)
+endif
+
+#include the all required path
 INC += -I.
 INC += -I$(TOP)
 INC += -I$(BUILD)
 
+#print of the debugg is enable
+ifeq ($(ENABLE_DISABLE_DEBUGG_MESSAGE), 1)
+$(info Debugg: INC paths are $(INC))
+endif
+
 #if the CROSS = 1 build add the compilation and linking flag
 ifeq ($(CROSS), 1)
+#python code to build the firmware file for stm32
 DFU = $(TOP)/tools/dfu.py
 PYDFU = $(TOP)/tools/pydfu.py
 #check and add the float related functionality
 ifeq ($(ENABLE_DISABLE_FLOAT), 1)
 #add the ARM core flags
-$(warning Compliation Flag, float is enabled)
+ifeq ($(ENABLE_DISABLE_DEBUGG_MESSAGE), 1)
+$(info Debugg: Compliation Flag, float is enabled!)
+$(info Debugg: Size of the output file will be increased!)
+endif
+#note* -mfloat-abi=hard is not working
+# MICROPY_FLOAT_IMPL_FLOAT for float and MICROPY_FLOAT_IMPL_NONE to remove float functionality
+#c standard library can be changed to -std=gnu99, -std=c11 
 CFLAGS_CORTEX_M4 = -mthumb -mtune=cortex-m4 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=soft -fsingle-precision-constant -Wdouble-promotion -Wfloat-conversion
 CFLAGS += -DMICROPY_FLOAT_IMPL=MICROPY_FLOAT_IMPL_FLOAT
-CFLAGS += $(INC) -Wall -Werror -std=c99 -nostdlib -Wpointer-arith  $(CFLAGS_CORTEX_M4) $(COPT)
+CFLAGS += $(INC) -Wall -Werror -nostdlib -Wpointer-arith $(_C_STD_LIB) $(CFLAGS_CORTEX_M4) $(COPT)
 else
-$(warning Compliation Flag, float is disabled)
-CFLAGS_CORTEX_M4 = -mthumb -mtune=cortex-m4 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=soft -fsingle-precision-constant -Wdouble-promotion -Wfloat-conversion
-CFLAGS += $(INC) -Wall -Werror -std=c99 -nostdlib -Wpointer-arith  $(CFLAGS_CORTEX_M4) $(COPT)
+ifeq ($(ENABLE_DISABLE_DEBUGG_MESSAGE), 1)
+$(info Compliation Flag, float is disabled)
 endif
-LDFLAGS += -nostdlib -T stm32f405.ld -Map=$@.map --cref --gc-sections
+CFLAGS_CORTEX_M4 = -mthumb -mtune=cortex-m4 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=soft -fsingle-precision-constant -Wdouble-promotion -Wfloat-conversion
+CFLAGS += $(INC) -Wall -Werror -nostdlib -Wpointer-arith $(_C_STD_LIB) $(CFLAGS_CORTEX_M4) $(COPT)
+endif
+LDFLAGS += -nostdlib -T $(_BOARD_LINKING_FILE) -Map=$@.map --cref --gc-sections
 else
 #compiler for linux enviroment 
 LD = gcc
@@ -61,14 +90,15 @@ CFLAGS += -fdata-sections -ffunction-sections
 endif
 
 # Flags for optional C++ source code
-CXXFLAGS += $(filter-out -std=c99,$(CFLAGS))
+CXXFLAGS += $(filter-out $(_C_STD_LIB),$(CFLAGS))
 
-$(info FinalCFLAGS is $(CFLAGS)) 
-$(info Compiler is $(CC)) 
+ifeq ($(ENABLE_DISABLE_DEBUGG_MESSAGE), 1)
+$(info Debugg: The compliation flags are $(CFLAGS)) 
+$(info Debugg: Compiler is $(CC)) 
+endif
 
 ifeq ($(ENABLE_DISABLE_FLOAT), 1)
 LIBS += "$(shell $(CC) $(CFLAGS) -print-libgcc-file-name)"
-
 #adding the python library
 SRC_LIB += $(addprefix lib/,\
         libm/math.c \
@@ -103,9 +133,9 @@ LIBM_O = $(addprefix $(BUILD)/, $(SRC_LIB:.c=.o))
 else
 LIBS = 
 endif
-
-$(info LIBS is $(LIBS)) 
-
+ifeq ($(ENABLE_DISABLE_DEBUGG_MESSAGE), 1)
+$(info Debugg: float library path is $(LIBS)) 
+endif
 
 SRC_C = \
 	main.c \

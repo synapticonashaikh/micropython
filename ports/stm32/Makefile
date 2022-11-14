@@ -96,6 +96,7 @@ INC += -I$(USBDEV_DIR)/core/inc -I$(USBDEV_DIR)/class/inc
 INC += -Ilwip_inc
 
 CFLAGS += $(INC) -Wall -Wpointer-arith -Werror -Wdouble-promotion -Wfloat-conversion -std=gnu99 -nostdlib $(CFLAGS_EXTRA)
+#$(info CFLAGS_EXTRA is $(CFLAGS)) 
 CFLAGS += -D$(CMSIS_MCU) -DUSE_FULL_LL_DRIVER
 CFLAGS += $(CFLAGS_MCU_$(MCU_SERIES))
 CFLAGS += $(COPT)
@@ -123,8 +124,6 @@ CFLAGS += -DMICROPY_FLOAT_IMPL=MICROPY_FLOAT_IMPL_FLOAT
 CFLAGS += -fsingle-precision-constant
 endif
 endif
-
-#$(info CFLAGS is $(CFLAGS)) 
 
 
 LDFLAGS += -nostdlib -L $(LD_DIR) $(addprefix -T,$(LD_FILES)) -Wl,-Map=$(@:.elf=.map) -Wl,--cref
@@ -264,6 +263,7 @@ LIBM_SRC_C += $(addprefix lib/libm/,\
 	wf_lgamma.c \
 	wf_tgamma.c \
 	)
+
 ifeq ($(SUPPORTS_HARDWARE_FP_SINGLE),1)
 LIBM_SRC_C += lib/libm/thumb_vfp_sqrtf.c
 else
@@ -271,7 +271,6 @@ LIBM_SRC_C += lib/libm/ef_sqrt.c
 endif
 endif
 
-#$(info LIBM_SRC_C is $(LIBM_SRC_C)) 
 
 LIBM_O = $(addprefix $(BUILD)/, $(LIBM_SRC_C:.c=.o))
 
@@ -279,6 +278,9 @@ LIBM_O = $(addprefix $(BUILD)/, $(LIBM_SRC_C:.c=.o))
 ifeq ($(MICROPY_FLOAT_IMPL),double)
 $(LIBM_O): CFLAGS := $(filter-out -Wdouble-promotion -Wfloat-conversion, $(CFLAGS))
 endif
+
+$(info FinalCFLAGS is $(CFLAGS)) 
+
 
 DRIVERS_SRC_C += $(addprefix drivers/,\
 	bus/softspi.c \
