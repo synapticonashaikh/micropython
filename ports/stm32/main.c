@@ -476,6 +476,8 @@ soft_reset:
     // GC init
     gc_init(MICROPY_HEAP_START, MICROPY_HEAP_END);
 
+   
+
     #if MICROPY_ENABLE_PYSTACK
     static mp_obj_t pystack[384];
     mp_pystack_init(pystack, &pystack[384]);
@@ -656,6 +658,8 @@ soft_reset_exit:
 
     gc_sweep_all();
     mp_deinit();
+
+    
 
     goto soft_reset;
 }

@@ -292,6 +292,7 @@ DRIVERS_SRC_C += $(addprefix drivers/,\
 SRC_C += \
 	boardctrl.c \
 	main.c \
+	mymodule.c \
 	stm32_it.c \
 	usbd_conf.c \
 	usbd_desc.c \
