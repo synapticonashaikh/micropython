@@ -74,7 +74,7 @@ LDFLAGS += -nostdlib -T $(_BOARD_LINKING_FILE) -Map=$@.map --cref --gc-sections
 else
 #compiler for linux enviroment 
 LD = gcc
-CFLAGS += $(INC) -Wall -Werror -Wdouble-promotion -Wfloat-conversion -std=c99 $(COPT)
+CFLAGS += $(INC) -Wall -Werror -Wdouble-promotion -Wfloat-conversion $(_C_STD_LIB) $(COPT)
 LDFLAGS += -Wl,-Map=$@.map,--cref -Wl,--gc-sections
 endif
 
@@ -152,6 +152,7 @@ ifeq ($(CROSS), 1)
 SRC_C += shared/libc/string0.c
 endif
 
+#add the library for reading the commands at interpretor
 SRC_QSTR += shared/readline/readline.c shared/runtime/pyexec.c
 SRC_QSTR += modmyport.c
 
@@ -160,9 +161,14 @@ OBJ += $(PY_CORE_O)
 ifeq ($(ENABLE_DISABLE_FLOAT), 1)
 OBJ += $(LIBM_O)
 endif
+
+ifeq ($(ENABLE_DISABLE_DEBUGG_MESSAGE), 1)
+#$(info Debugg: OBJ var is $(PY_CORE_O)) 
+endif
+
+
 OBJ += $(addprefix $(BUILD)/, $(SRC_C:.c=.o))
 OBJ += $(addprefix $(BUILD)/, $(SRC_CXX:.cpp=.o))
-
 
 ifeq ($(CROSS), 1)
 all: $(BUILD)/firmware.dfu
@@ -170,6 +176,10 @@ else
 all: $(BUILD)/firmware.elf
 endif
 
+#print of the debugg is enable
+ifeq ($(ENABLE_DISABLE_DEBUGG_MESSAGE), 1)
+$(info Debugg: PYTHON is $(PYTHON))
+endif
 
 
 $(BUILD)/_frozen_mpy.c: $(TOP)/tests/frozen/frozentest.mpy $(BUILD)/genhdr/qstrdefs.generated.h
