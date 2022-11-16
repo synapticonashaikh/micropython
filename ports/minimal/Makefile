@@ -10,6 +10,9 @@ ENABLE_DISABLE_FLOAT = 1
 #enable/ disable debugg message 
 ENABLE_DISABLE_DEBUGG_MESSAGE = 1
 
+#enable/ disable self created module
+ENABLE_DISABLE_OWN_MODULE = 1
+
 # qstr definitions (must come before including py.mk)
 QSTR_DEFS = qstrdefsport.h
 
@@ -44,6 +47,7 @@ INC += -I$(BUILD)
 ifeq ($(ENABLE_DISABLE_DEBUGG_MESSAGE), 1)
 $(info Debugg: INC paths are $(INC))
 endif
+
 
 #if the CROSS = 1 build add the compilation and linking flag
 ifeq ($(CROSS), 1)
@@ -141,12 +145,15 @@ SRC_C = \
 	main.c \
 	uart_core.c \
 	STdriver.c \
-	modmyport.c \
 	shared/libc/printf.c \
 	shared/readline/readline.c \
 	shared/runtime/pyexec.c \
 	shared/runtime/stdout_helpers.c \
 	$(BUILD)/_frozen_mpy.c \
+
+ifeq ($(ENABLE_DISABLE_OWN_MODULE), 1)
+SRC_C += modmyport.c 
+endif        
 
 ifeq ($(CROSS), 1)
 SRC_C += shared/libc/string0.c
@@ -154,37 +161,49 @@ endif
 
 #add the library for reading the commands at interpretor
 SRC_QSTR += shared/readline/readline.c shared/runtime/pyexec.c
+ifeq ($(ENABLE_DISABLE_OWN_MODULE), 1)
 SRC_QSTR += modmyport.c
-
+endif
 
 OBJ += $(PY_CORE_O)
 ifeq ($(ENABLE_DISABLE_FLOAT), 1)
 OBJ += $(LIBM_O)
 endif
-
-ifeq ($(ENABLE_DISABLE_DEBUGG_MESSAGE), 1)
-#$(info Debugg: OBJ var is $(PY_CORE_O)) 
-endif
-
-
 OBJ += $(addprefix $(BUILD)/, $(SRC_C:.c=.o))
 OBJ += $(addprefix $(BUILD)/, $(SRC_CXX:.cpp=.o))
 
+ifeq ($(ENABLE_DISABLE_DEBUGG_MESSAGE), 1)
+$(info Debugg: Final build info)
+$(info Debugg: PYTHON is $(PYTHON))
+$(info Debugg: Q is $(Q))
+$(info Debugg: LD is $(LD))
+$(info Debugg: LDFLAGS is $(LDFLAGS))
+$(info Debugg: LIBS is $(LIBS))
+$(info Debugg: SIZE is $(SIZE))
+$(info Debugg: CC is $(CC))
+$(info Debugg: GEN is $(GEN))
+$(info Debugg: CMD is $(Q)$(LD) $(LDFLAGS) -o $(LIBS))
+$(info Debugg: OBJCOPY is $(OBJCOPY))
+$(info Debugg: BIN is $(Q)$(OBJCOPY) -O binary -j .isr_vector -j .text -j .data -o $(BUILD)/firmware.bin)
+#$(info Debugg: OBJ is $(OBJ))
+endif   
+
+
 ifeq ($(CROSS), 1)
 all: $(BUILD)/firmware.dfu
+ifeq ($(ENABLE_DISABLE_DEBUGG_MESSAGE), 1)
+$(info Debugg: Building all $(BUILD)/firmware.dfu )
+endif
 else
 all: $(BUILD)/firmware.elf
-endif
-
-#print of the debugg is enable
 ifeq ($(ENABLE_DISABLE_DEBUGG_MESSAGE), 1)
-$(info Debugg: PYTHON is $(PYTHON))
+$(info Debugg: Building all $(BUILD)/firmware.elf )
 endif
-
+endif
 
 $(BUILD)/_frozen_mpy.c: $(TOP)/tests/frozen/frozentest.mpy $(BUILD)/genhdr/qstrdefs.generated.h
 	$(ECHO) "MISC freezing bytecode"
-	$(Q)$(TOP)/tools/mpy-tool.py -f -q $(BUILD)/genhdr/qstrdefs.preprocessed.h -mlongint-impl=none $< > $@
+	$(Q)$(TOP)/tools/mpy-tool.py -f -q $(BUILD)/genhdr/qstrdefs.preprocessed.h -mlongint-impl=none $< > $@    
 
 $(BUILD)/firmware.elf: $(OBJ)
 	$(ECHO) "LINK $@"
@@ -212,5 +231,6 @@ run:
 
 test: $(BUILD)/firmware.elf
 	$(Q)/bin/echo -e "print('hello world!', list(x+1 for x in range(10)), end='eol\\\\n')\\r\\n\\x04" | $(BUILD)/firmware.elf | tail -n2 | grep "^hello world! \\[1, 2, 3, 4, 5, 6, 7, 8, 9, 10\\]eol"
+
 
 include $(TOP)/py/mkrules.mk

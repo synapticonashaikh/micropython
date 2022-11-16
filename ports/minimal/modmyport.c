@@ -62,6 +62,7 @@ STATIC mp_obj_t board_add(mp_obj_t a, mp_obj_t b)
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_2(board_add_obj, board_add);
 
+#if MICROPY_FLOAT_IMPL == MICROPY_FLOAT_IMPL_FLOAT
 STATIC mp_obj_t board_mul(mp_obj_t a, mp_obj_t b) 
 {
     
@@ -72,7 +73,9 @@ STATIC mp_obj_t board_mul(mp_obj_t a, mp_obj_t b)
 
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_2(board_mul_obj, board_mul);
+#endif
 
+#if MICROPY_FLOAT_IMPL == MICROPY_FLOAT_IMPL_FLOAT
 STATIC mp_obj_t board_mul10(mp_obj_t a) 
 {
    mp_float_t f,r;
@@ -85,7 +88,7 @@ STATIC mp_obj_t board_mul10(mp_obj_t a)
 
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(board_mul10_obj, board_mul10);
-
+#endif
 
 STATIC mp_obj_t board_strcat(mp_obj_t a, mp_obj_t b) 
 {
@@ -106,8 +109,10 @@ STATIC const mp_rom_map_elem_t board_module_globals_table[] =
     { MP_ROM_QSTR(MP_QSTR_clockinfo), MP_ROM_PTR(&board_clockinfo_obj) },
     { MP_ROM_QSTR(MP_QSTR_healthinfo), MP_ROM_PTR(&board_healthinfo_obj) },
     { MP_ROM_QSTR(MP_QSTR_add), MP_ROM_PTR(&board_add_obj) },
+ #if MICROPY_FLOAT_IMPL == MICROPY_FLOAT_IMPL_FLOAT   
     { MP_ROM_QSTR(MP_QSTR_mul), MP_ROM_PTR(&board_mul_obj) },    
     { MP_ROM_QSTR(MP_QSTR_mul10),  MP_ROM_PTR(&board_mul10_obj) },
+#endif    
     { MP_ROM_QSTR(MP_QSTR_strcat), MP_ROM_PTR(&board_strcat_obj)},
 
 };
