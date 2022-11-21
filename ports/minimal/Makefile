@@ -10,6 +10,9 @@ ENABLE_DISABLE_FLOAT = 1
 #enable/ disable debugg message 
 ENABLE_DISABLE_DEBUGG_MESSAGE = 1
 
+#enable disable micropython debug
+#MPY_DEBUGG_FLAG = -DMPY_DEBUGG_ENABLE
+
 #enable/ disable self created module
 ENABLE_DISABLE_OWN_MODULE = 1
 
@@ -66,6 +69,7 @@ endif
 #c standard library can be changed to -std=gnu99, -std=c11 
 CFLAGS_CORTEX_M4 = -mthumb -mtune=cortex-m4 -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=soft -fsingle-precision-constant -Wdouble-promotion -Wfloat-conversion
 CFLAGS += -DMICROPY_FLOAT_IMPL=MICROPY_FLOAT_IMPL_FLOAT
+CFLAGS += $(MPY_DEBUGG_FLAG)
 CFLAGS += $(INC) -Wall -Werror -nostdlib -Wpointer-arith $(_C_STD_LIB) $(CFLAGS_CORTEX_M4) $(COPT)
 else
 ifeq ($(ENABLE_DISABLE_DEBUGG_MESSAGE), 1)
