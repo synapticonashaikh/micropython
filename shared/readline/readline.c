@@ -554,11 +554,19 @@ void readline_init(vstr_t *line, const char *prompt) {
     #endif
 }
 
-int readline(vstr_t *line, const char *prompt) {
+int readline(vstr_t *line, const char *prompt) 
+{
     readline_init(line, prompt);
     for (;;) {
-        int c = mp_hal_stdin_rx_chr();
+        int c = mp_hal_stdin_rx_chr( );
+        #ifdef MPY_DEBUGG_ENABLE
+            printf("_%d",c);
+        #endif
         int r = readline_process_char(c);
+        #ifdef MPY_DEBUGG_ENABLE
+                printf("~%d",r);
+        #endif  
+
         if (r >= 0) {
             return r;
         }
