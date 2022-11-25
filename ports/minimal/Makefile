@@ -149,6 +149,7 @@ SRC_C = \
 	main.c \
 	uart_core.c \
 	STdriver.c \
+        ctimer.c \
 	shared/libc/printf.c \
 	shared/readline/readline.c \
 	shared/runtime/pyexec.c \
@@ -157,6 +158,7 @@ SRC_C = \
 
 ifeq ($(ENABLE_DISABLE_OWN_MODULE), 1)
 SRC_C += modmyport.c 
+SRC_C += modtimer.c
 endif        
 
 ifeq ($(CROSS), 1)
@@ -167,6 +169,7 @@ endif
 SRC_QSTR += shared/readline/readline.c shared/runtime/pyexec.c
 ifeq ($(ENABLE_DISABLE_OWN_MODULE), 1)
 SRC_QSTR += modmyport.c
+SRC_QSTR += modtimer.c
 endif
 
 OBJ += $(PY_CORE_O)

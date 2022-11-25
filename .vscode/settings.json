@@ -2,6 +2,8 @@
     "files.associations": {
         "*.xc": "cpp",
         "stdarg.h": "c",
-        "mpconfigboard_common.h": "c"
+        "mpconfigboard_common.h": "c",
+        "mphalport.h": "c",
+        "timer.h": "c"
     }
 }
