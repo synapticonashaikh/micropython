@@ -5,7 +5,8 @@
         "mpconfigboard_common.h": "c",
         "mphalport.h": "c",
         "timer.h": "c",
-        "pin.h": "c"
+        "pin.h": "c",
+        "runtime.h": "c"
     },
     "cmake.sourceDirectory": "${workspaceFolder}/lib/mbedtls/programs/test"
 }
