@@ -58,7 +58,7 @@ STATIC mp_obj_t board_add(mp_obj_t a, mp_obj_t b)
    MP_OBJ_SMALL_INT_VALUE(a), MP_OBJ_SMALL_INT_VALUE(b), 
    MP_OBJ_SMALL_INT_VALUE(a)+ MP_OBJ_SMALL_INT_VALUE(b)); 
 
-   return MP_OBJ_NEW_SMALL_INT(MP_OBJ_SMALL_INT_VALUE(a)+ MP_OBJ_SMALL_INT_VALUE(b));
+   return MP_OBJ_NEW_SMALL_INT(MP_OBJ_SMALL_INT_VALUE(a) + MP_OBJ_SMALL_INT_VALUE(b));
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_2(board_add_obj, board_add);
 

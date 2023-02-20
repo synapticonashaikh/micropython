@@ -6,7 +6,14 @@
         "mphalport.h": "c",
         "timer.h": "c",
         "pin.h": "c",
-        "runtime.h": "c"
+        "runtime.h": "c",
+        "samd_soc.h": "c",
+        "hal_gpio.h": "c",
+        "pin_af.h": "c",
+        "virtpin.h": "c",
+        "modmachine.h": "c",
+        "mpirq.h": "c"
     },
-    "cmake.sourceDirectory": "${workspaceFolder}/lib/mbedtls/programs/test"
+    "cmake.sourceDirectory": "${workspaceFolder}/lib/mbedtls/programs/test",
+    "C_Cpp.errorSquiggles": "disabled"
 }
