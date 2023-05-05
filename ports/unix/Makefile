@@ -242,6 +242,9 @@ endif
 
 CXXFLAGS += $(filter-out -Wmissing-prototypes -Wold-style-definition -std=gnu99,$(CFLAGS) $(CXXFLAGS_MOD))
 
+$(info CFLAGS is $(CFLAGS))
+
+
 ifeq ($(MICROPY_FORCE_32BIT),1)
 RUN_TESTS_MPY_CROSS_FLAGS = --mpy-cross-flags='-march=x86'
 endif
@@ -259,13 +262,17 @@ endif
 
 include $(TOP)/py/mkrules.mk
 
-.PHONY: test test_full
+.PHONY: 
+	$(info .PHONY is executing right now)
+	test test_full
 
 test: $(BUILD)/$(PROG) $(TOP)/tests/run-tests.py
+	$(info test is executing right now)
 	$(eval DIRNAME=ports/$(notdir $(CURDIR)))
 	cd $(TOP)/tests && MICROPY_MICROPYTHON=../$(DIRNAME)/$(BUILD)/$(PROG) ./run-tests.py
 
 test_full: $(BUILD)/$(PROG) $(TOP)/tests/run-tests.py
+	$(info test_full is executing right now)
 	$(eval DIRNAME=ports/$(notdir $(CURDIR)))
 	cd $(TOP)/tests && MICROPY_MICROPYTHON=../$(DIRNAME)/$(BUILD)/$(PROG) ./run-tests.py
 	cd $(TOP)/tests && MICROPY_MICROPYTHON=../$(DIRNAME)/$(BUILD)/$(PROG) ./run-tests.py -d thread
@@ -275,6 +282,7 @@ test_full: $(BUILD)/$(PROG) $(TOP)/tests/run-tests.py
 	cat $(TOP)/tests/basics/0prelim.py | ./$(BUILD)/$(PROG) | grep -q 'abc'
 
 test_gcov: test_full
+	$(info test_gcov is executing right now)
 	gcov -o $(BUILD)/py $(TOP)/py/*.c
 	gcov -o $(BUILD)/extmod $(TOP)/extmod/*.c
 
@@ -282,11 +290,12 @@ test_gcov: test_full
 # Deduce it from CROSS_COMPILE by default, but can be overridden.
 ifneq ($(CROSS_COMPILE),)
 CROSS_COMPILE_HOST = --host=$(patsubst %-,%,$(CROSS_COMPILE))
+$(info CROSS_COMPILE_HOST is executing right now)
 else
 CROSS_COMPILE_HOST =
 endif
 
-deplibs: $(DEPLIBS)
+deplibs: $(DEPLIBS) 
 
 libffi: $(BUILD)/lib/libffi/include/ffi.h
 
@@ -298,7 +307,7 @@ $(TOP)/lib/libffi/configure: $(TOP)/lib/libffi/autogen.sh
 $(BUILD)/lib/libffi/include/ffi.h: $(TOP)/lib/libffi/configure
 	mkdir -p $(BUILD)/lib/libffi; cd $(BUILD)/lib/libffi; \
 	$(abspath $(TOP))/lib/libffi/configure $(CROSS_COMPILE_HOST) --prefix=$$PWD/out --disable-structs CC="$(CC)" CXX="$(CXX)" LD="$(LD)" CFLAGS="-Os -fomit-frame-pointer -fstrict-aliasing -ffast-math -fno-exceptions"; \
-	$(MAKE) install-exec-recursive; $(MAKE) -C include install-data-am
+	$(MAKE) install-exec-recursive; $(MAKE) -C include install-data-am  
 
 PREFIX = /usr/local
 BINDIR = $(DESTDIR)$(PREFIX)/bin

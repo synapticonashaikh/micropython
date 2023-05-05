@@ -12,7 +12,10 @@
         "pin_af.h": "c",
         "virtpin.h": "c",
         "modmachine.h": "c",
-        "mpirq.h": "c"
+        "mpirq.h": "c",
+        "vfs_posix.h": "c",
+        "vfs_lfs.h": "c",
+        "vfs.h": "c"
     },
     "cmake.sourceDirectory": "${workspaceFolder}/lib/mbedtls/programs/test",
     "C_Cpp.errorSquiggles": "disabled"
