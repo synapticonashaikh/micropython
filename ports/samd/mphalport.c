@@ -147,7 +147,7 @@ uint64_t mp_hal_ticks_us_64(void) {
         us64_upper++;
     }
     #if defined(MCU_SAMD21)
-    return ((uint64_t)us64_upper << 32) | us64_lower;
+    return ((uint64_t)us64_upper << 31) | (us64_lower >> 1);
     #elif defined(MCU_SAMD51)
     return ((uint64_t)us64_upper << 28) | (us64_lower >> 4);
     #endif
@@ -162,8 +162,12 @@ uintptr_t mp_hal_stdio_poll(uintptr_t poll_flags) {
         ret |= MP_STREAM_POLL_RD;
     }
 
+    if ((poll_flags & MP_STREAM_POLL_WR) && tud_cdc_connected() && tud_cdc_write_available() > 0) {
+        ret |= MP_STREAM_POLL_WR;
+    }
+
     #if MICROPY_PY_OS_DUPTERM
-    ret |= mp_uos_dupterm_poll(poll_flags);
+    ret |= mp_os_dupterm_poll(poll_flags);
     #endif
     return ret;
 }
@@ -178,7 +182,7 @@ int mp_hal_stdin_rx_chr(void) {
         }
 
         #if MICROPY_PY_OS_DUPTERM
-        int dupterm_c = mp_uos_dupterm_rx_chr();
+        int dupterm_c = mp_os_dupterm_rx_chr();
         if (dupterm_c >= 0) {
             return dupterm_c;
         }
@@ -194,8 +198,13 @@ void mp_hal_stdout_tx_strn(const char *str, mp_uint_t len) {
             if (n > CFG_TUD_CDC_EP_BUFSIZE) {
                 n = CFG_TUD_CDC_EP_BUFSIZE;
             }
-            while (n > tud_cdc_write_available()) {
+            int timeout = 0;
+            // Wait with a max of USC_CDC_TIMEOUT ms
+            while (n > tud_cdc_write_available() && timeout++ < MICROPY_HW_USB_CDC_TX_TIMEOUT) {
                 MICROPY_EVENT_POLL_HOOK
+            }
+            if (timeout >= MICROPY_HW_USB_CDC_TX_TIMEOUT) {
+                break;
             }
             uint32_t n2 = tud_cdc_write(str + i, n);
             tud_cdc_write_flush();
@@ -203,6 +212,6 @@ void mp_hal_stdout_tx_strn(const char *str, mp_uint_t len) {
         }
     }
     #if MICROPY_PY_OS_DUPTERM
-    mp_uos_dupterm_tx_strn(str, len);
+    mp_os_dupterm_tx_strn(str, len);
     #endif
 }

@@ -1,6 +1,5 @@
 #include <stdint.h>
-// We need to provide a declaration/definition of alloca()
-#include <alloca.h>
+
 // options to control how MicroPython is built
 
 // Use the minimal starting configuration (disables all optional features).
@@ -26,9 +25,8 @@ typedef intptr_t mp_int_t; // must be pointer size
 typedef uintptr_t mp_uint_t; // must be pointer size
 typedef long mp_off_t;
 
-//#ifndef MICROPY_FLOAT_IMPL // can be configured by each board via mpconfigboard.mk
-//#define MICROPY_FLOAT_IMPL          (MICROPY_FLOAT_IMPL_FLOAT)
-//#endif
+// We need to provide a declaration/definition of alloca()
+#include <alloca.h>
 
 #define MICROPY_HW_BOARD_NAME "NUCLEOF446RE"
 #define MICROPY_HW_MCU_NAME "STM32F446RE"

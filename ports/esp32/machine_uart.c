@@ -37,17 +37,10 @@
 #include "modmachine.h"
 #include "uart.h"
 
-#if ESP_IDF_VERSION < ESP_IDF_VERSION_VAL(4, 1, 0)
-#define UART_INV_TX UART_INVERSE_TXD
-#define UART_INV_RX UART_INVERSE_RXD
-#define UART_INV_RTS UART_INVERSE_RTS
-#define UART_INV_CTS UART_INVERSE_CTS
-#else
 #define UART_INV_TX UART_SIGNAL_TXD_INV
 #define UART_INV_RX UART_SIGNAL_RXD_INV
 #define UART_INV_RTS UART_SIGNAL_RTS_INV
 #define UART_INV_CTS UART_SIGNAL_CTS_INV
-#endif
 
 #define UART_INV_MASK (UART_INV_TX | UART_INV_RX | UART_INV_RTS | UART_INV_CTS)
 
@@ -273,9 +266,7 @@ STATIC void machine_uart_init_helper(machine_uart_obj_t *self, size_t n_args, co
         uint32_t char_time_ms = 12000 / baudrate + 1;
         uint32_t rx_timeout = self->timeout_char / char_time_ms;
         if (rx_timeout < 1) {
-            #if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(4, 1, 0)
             uart_set_rx_full_threshold(self->uart_num, 1);
-            #endif
             uart_set_rx_timeout(self->uart_num, 1);
         } else {
             uart_set_rx_timeout(self->uart_num, rx_timeout);
@@ -319,6 +310,10 @@ STATIC mp_obj_t machine_uart_make_new(const mp_obj_type_t *type, size_t n_args, 
         .flow_ctrl = UART_HW_FLOWCTRL_DISABLE,
         .rx_flow_ctrl_thresh = 0
     };
+    #if SOC_UART_SUPPORT_XTAL_CLK
+    // works independently of APB frequency
+    uartcfg.source_clk = UART_SCLK_XTAL; // ESP32C3, ESP32S3
+    #endif
 
     // create instance
     machine_uart_obj_t *self = mp_obj_malloc(machine_uart_obj_t, &machine_uart_type);
